@@ -33,7 +33,7 @@
         <script>
             var sql = new cartodb.SQL({user: 'solutions'});
             sql.execute("SELECT count(*) as num_tweets FROM catalonia_elections_twitter_test")
-            .done(function (data2) {
+            .done(function (data) {
                 $("#total_tweets").text(data.rows[0].num_tweets);
             });
             sql.execute("" +
