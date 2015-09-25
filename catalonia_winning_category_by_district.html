@@ -1,0 +1,74 @@
+<html lang="en">
+    <head>
+        <title>Catalonia winning Twitter category by district</title>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css"/>
+        <style type="text/css">
+            body, html {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            #map {
+                height: 100%;
+                width: 100%;
+                background: #fff
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+        <script>
+            var map = L.map('map', {
+                scrollWheelZoom: true,
+                center: [42, 1.8],
+                zoom: 8
+            });
+
+            var dataLayer = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "" +
+                        "SELECT DISTINCT ON (h.cartodb_id) h.the_geom_webmercator, count(c.the_geom) AS ct, c.category_name, " +
+                        "CASE WHEN category_name=1 THEN 'Nos vamos' " +
+                        "     WHEN category_name=2 THEN 'Nos quedamos' " +
+                        "     ELSE 'otros' " +
+                        "END " +
+                        "FROM catalonia h " +
+                        "LEFT JOIN catalonia_elections_twitter_test c ON ST_Within(c.the_geom, h.the_geom) " +
+                        "GROUP  BY h.cartodb_id, c.category_name " +
+                        "ORDER  BY h.cartodb_id, count(c.the_geom) DESC, c.category_name;",
+                    cartocss: "" +
+                        "#catalonia{" +
+                        "  polygon-fill: #FFFFB2;" +
+                        "  polygon-opacity: 0.8;" +
+                        "  line-color: #000000;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: .2;" +
+                        "}" +
+                        "#catalonia::labels {" +
+                        "  text-name: [case];" +
+                        "  text-face-name: 'DejaVu Sans Book';" +
+                        "  text-size: 10;" +
+                        "  text-label-position-tolerance: 10;" +
+                        "  text-fill: #000;" +
+                        "  text-halo-fill: #FFF;" +
+                        "  text-halo-radius: 1;" +
+                        "  text-dy: -10;" +
+                        "  text-allow-overlap: true;" +
+                        "  text-placement: point;" +
+                        " text-placement-type: simple;" +
+                        "}" +
+                        "#catalonia [ category_name = 1] {" +
+                        "  polygon-fill: #FF0000;" +
+                        "}" +
+                        "#catalonia [ category_name = 2] {" +
+                        "  polygon-fill: #00FF00;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, dataLayer).addTo(map);
+        </script>
+    </body>
+</html>

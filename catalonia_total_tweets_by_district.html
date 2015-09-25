@@ -1,0 +1,84 @@
+<html lang="en">
+    <head>
+        <title>Catalonia total tweets by district</title>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css"/>
+        <style type="text/css">
+            body, html {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            #map {
+                height: 100%;
+                width: 100%;
+                background: #fff
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+        <script>
+            var map = L.map('map', {
+                scrollWheelZoom: true,
+                center: [42, 1.8],
+                zoom: 8
+            });
+
+            var dataLayer = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "" +
+                        "SELECT solutions.catalonia.*, count(solutions.catalonia_elections_twitter_test.the_geom) as numtweets " +
+                        "FROM solutions.catalonia LEFT JOIN solutions.catalonia_elections_twitter_test " +
+                        "ON st_contains(solutions.catalonia.the_geom,solutions.catalonia_elections_twitter_test.the_geom) " +
+                        "GROUP BY solutions.catalonia.cartodb_id",
+                    cartocss: "" +
+                        "#catalonia{" +
+                        "  polygon-fill: #FFFFB2;" +
+                        "  polygon-opacity: 0.8;" +
+                        "  line-color: #000000;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: .2;" +
+                        "}" +
+                        "#catalonia::labels {" +
+                        "  text-name: [seccio];" +
+                        "  text-face-name: 'DejaVu Sans Book';" +
+                        "  text-size: 10;" +
+                        "  text-label-position-tolerance: 10;" +
+                        "  text-fill: #000;" +
+                        "  text-halo-fill: #FFF;" +
+                        "  text-halo-radius: 1;" +
+                        "  text-dy: -10;" +
+                        "  text-allow-overlap: true;" +
+                        "  text-placement: point;" +
+                        " text-placement-type: simple;" +
+                        "}" +
+                        "#catalonia [ numtweets <= 3395] {" +
+                        "  polygon-fill: #B10026;" +
+                        "}" +
+                        "#catalonia [ numtweets <= 92] {" +
+                        "  polygon-fill: #E31A1C;" +
+                        "}" +
+                        "#catalonia [ numtweets <= 48.5] {" +
+                        "  polygon-fill: #FC4E2A;" +
+                        "}" +
+                        "#catalonia [ numtweets <= 26.5] {" +
+                        "  polygon-fill: #FD8D3C;" +
+                        "}" +
+                        "#catalonia [ numtweets <= 17.5] {" +
+                        "  polygon-fill: #FEB24C;" +
+                        "}" +
+                        "#catalonia [ numtweets <= 11.5] {" +
+                        "  polygon-fill: #FED976;" +
+                        "}" +
+                        "#catalonia [ numtweets <= 5.5] {" +
+                        "  polygon-fill: #FFFFB2;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, dataLayer).addTo(map);
+        </script>
+    </body>
+</html>
