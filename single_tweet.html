@@ -1,0 +1,56 @@
+<html lang="en">
+    <head>
+        <title>Single tweet</title>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css"/>
+        <style type="text/css">
+            body, html {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            #map {
+                height: 100%;
+                width: 100%;
+                background: #fff
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+        <script>
+            var map = L.map('map', {
+                scrollWheelZoom: true,
+                center: [40, 0],
+                zoom: 3
+            });
+
+            var basemapLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
+            });
+            map.addLayer(basemapLayer);
+
+            var dataLayer = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "" +
+                        "SELECT ST_Transform(ST_Segmentize(ST_MakeLine(ST_Transform(the_geom, 953027), ST_Transform(ST_SetSRID(ST_MakePoint(0, 40), 4326), 953027)), 100000), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test",
+                    cartocss: "" +
+                        "#catalonia_elections_twitter_test{" +
+                        "  line-color: #000000;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: .2;" +
+                        "}" +
+                        "#catalonia_elections_twitter_test [ category_name = 1] {" +
+                        "  line-color: #FF0000;" +
+                        "}" +
+                        "#catalonia_elections_twitter_test [ category_name = 2] {" +
+                        "  line-color: #00FF00;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, dataLayer).addTo(map);
+        </script>
+    </body>
+</html>

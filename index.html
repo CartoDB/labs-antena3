@@ -8,11 +8,16 @@
         <div class="Grid">
             <div class="Grid-inner">
                 <div class="Grid-cell Grid-cell--col3">
-                    <ul class="FloatingBox FloatingBox--left u-pa u-padding-xl">
+                    <ul class="FloatingBox FloatingBox--left u-padding-xl">
                         <li class="button button--outline"><a href="global_animation.html" target="maps">Global animation</a></li>
                         <li class="button button--outline"><a href="spain_animation.html" target="maps">Spain animation</a></li>
                         <li class="button button--outline"><a href="catalonia_total_tweets_by_district.html" target="maps">Catalonia total tweets by district</a></li>
                         <li class="button button--outline"><a href="catalonia_winning_category_by_district.html" target="maps">Catalonia winning category by district</a></li>
+                        <li class="button button--outline"><a href="single_tweet.html" target="maps">Single tweet</a></li>
+                    </ul>
+                    <ul class="FloatingBox FloatingBox--left u-padding-xl">
+                        <li>Num tweets: <span id="num_tweets"></span></li>
+                        <li></li>
                     </ul>
                 </div>
                 <div class="Grid-cell Grid-cell--col9">
@@ -20,5 +25,13 @@
                 </div>
             </div>
         </div>
+        <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+        <script>
+            var sql = new cartodb.SQL({user: 'solutions'});
+            sql.execute("SELECT count(*) as num_tweets FROM catalonia_elections_twitter_test")
+            .done(function (data) {
+                $("#num_tweets").text(data.rows[0].num_tweets);
+            })
+        </script>
     </body>
 </html>
