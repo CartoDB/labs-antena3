@@ -1,0 +1,50 @@
+1: {
+    name: "Junts pel sí",
+    id: "junts",
+    color: "#ffffff"
+},
+2: {
+    name: "CUP",
+    id: "cup",
+    color: "#ffffff"
+},
+3: {
+    name: "Ciudadanos",
+    id: "ciudadanos",
+    color: "#ffffff"
+},
+4: {
+    name: "PP",
+    id: "pp",
+    color: "#ffffff"
+},
+5: {
+    name: "PSC",
+    id: "psc",
+    color: "#ffffff"
+},
+6: {
+    name: "Cat sí que es pot",
+    id: "catsi",
+    color: "#ffffff"
+},
+7: {
+    name: "Unió",
+    id: "unio",
+    color: "#ffffff"
+},
+8: {
+    name: "Independencia sí",
+    id: "indsi",
+    color: "#ffffff"
+},
+9: {
+    name: "Independencia no",
+    id: "indno",
+    color: "#ffffff"
+},
+10: {
+    name: "Global",
+    id: "global",
+    color: "#ffffff"
+}

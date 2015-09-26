@@ -1,6 +1,7 @@
 <html lang="en">
     <head>
-        <title>Antena3 resource index</title>
+        <meta charset="utf-8" />
+        <title>Antena3 elecciones catalanas 2015</title>
         <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="css/styleguide.min.css"/>
     </head>
@@ -9,18 +10,19 @@
             <div class="Grid-inner">
                 <div class="Grid-cell Grid-cell--col3">
                     <ul class="FloatingBox FloatingBox--left u-padding-xl">
-                        <li class="button button--outline"><a href="global_animation.html" target="maps">Global animation</a></li>
-                        <li class="button button--outline"><a href="multilayer.html" target="maps">Multilayer</a></li>
-                        <li class="button button--outline"><a href="spain_animation.html" target="maps">Spain animation</a></li>
-                        <li class="button button--outline"><a href="catalonia_total_tweets_by_district.html" target="maps">Catalonia total tweets by district</a></li>
-                        <li class="button button--outline"><a href="catalonia_winning_category_by_district.html" target="maps">Catalonia winning category by district</a></li>
-                        <li class="button button--outline"><a href="single_tweet.html" target="maps">Single tweet</a></li>
+                        <li class="button button--outline"><a href="global_animation.html" target="maps">Animación global</a></li>
+                        <li class="button button--outline"><a href="multilayer_party.html" target="maps">Multicapa (partidos)</a></li>
+                        <li class="button button--outline"><a href="multilayer_independence.html" target="maps">Multicapa (independencia)</a></li>
+                        <li class="button button--outline"><a href="spain_animation.html" target="maps">Animación España</a></li>
+                        <li class="button button--outline"><a href="catalonia_total_tweets_by_district.html" target="maps">Cataluña, tuits totales por distrito</a></li>
+                        <li class="button button--outline"><a href="catalonia_winning_category_by_district.html" target="maps">Cataluña partido ganador por distrito</a></li>
+                        <li class="button button--outline"><a href="single_tweet.html" target="maps">Tweet único</a></li>
                     </ul>
                     <ul class="FloatingBox FloatingBox--left u-padding-xl">
-                        <li><p>Total tweets: <span id="total_tweets"></span></p></li>
-                        <li><p>Tweets per province: <span id="tweets_per_province"></span></p></li>
-                        <li><p>Tweets per category: <span id="tweets_per_category"></span></p></li>
-                        <li><p>Tweets per province per category: <span id="tweets_per_province_per_category"></span></p></li>
+                        <li><p>Tuits totales: <span id="total_tweets"></span></p></li>
+                        <li><p>Tuits por provincia: <span id="tweets_per_province"></span></p></li>
+                        <li><p>Tuits por partido: <span id="tweets_per_category"></span></p></li>
+                        <li><p>Tuits por provincia por partido: <span id="tweets_per_province_per_category"></span></p></li>
                         <li><p></p></li>
                     </ul>
                 </div>
@@ -31,15 +33,15 @@
         </div>
         <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
         <script>
-            var sql = new cartodb.SQL({user: 'solutions'});
-            sql.execute("SELECT count(*) as num_tweets FROM catalonia_elections_twitter_test")
+            var sql = new cartodb.SQL({user: 'kike-5'});
+            sql.execute("SELECT count(*) as num_tweets FROM catalonia2015")
             .done(function (data) {
                 $("#total_tweets").text(data.rows[0].num_tweets);
             });
             sql.execute("" +
-                        "SELECT count(catalonia_elections_twitter_test.the_geom) as num_tweets, name from catalonia_elections_twitter_test " +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, name from catalonia2015 " +
                         "JOIN spain_provinces " +
-                        "ON st_contains(spain_provinces.the_geom, catalonia_elections_twitter_test.the_geom) " +
+                        "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
                         "WHERE gn_a1_code = 'ES.B' OR gn_a1_code = 'ES.GI' OR gn_a1_code = 'ES.L' OR gn_a1_code = 'ES.T' GROUP BY name")
             .done(function (data) {
                 $("#tweets_per_province").text("" +
@@ -48,15 +50,15 @@
                         data.rows[2].num_tweets + " en " + data.rows[2].name + " y " +
                         data.rows[3].num_tweets + " en " + data.rows[3].name + ")");
             });
-            sql.execute("SELECT count(*) as num_tweets FROM catalonia_elections_twitter_test GROUP BY category_name")
+            sql.execute("SELECT count(*) as num_tweets FROM catalonia2015 GROUP BY category_name")
             .done(function (data) {
                 $("#tweets_per_category").text("Nos vamos: " + data.rows[0].num_tweets +
                     ", Nos quedamos: " + data.rows[1].num_tweets);
             });
             sql.execute("" +
-                        "SELECT count(catalonia_elections_twitter_test.the_geom) as num_tweets, name, category_name from catalonia_elections_twitter_test " +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
                         "JOIN spain_provinces " +
-                        "ON st_contains(spain_provinces.the_geom, catalonia_elections_twitter_test.the_geom) " +
+                        "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
                         "WHERE gn_a1_code = 'ES.B' OR gn_a1_code = 'ES.GI' OR gn_a1_code = 'ES.L' OR gn_a1_code = 'ES.T' GROUP BY name, category_name ",
                         "ORDER BY name, category_name")
             .done(function (data) {

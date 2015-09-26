@@ -1,6 +1,7 @@
 <html lang="en">
     <head>
-        <title>Global animation</title>
+        <meta charset="utf-8" />
+        <title>Mapa global por partidos</title>
         <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
         <link rel="stylesheet" href="css/map.css" />
         <style type="text/css">
@@ -24,7 +25,7 @@
             -torque-resolution:2;
             -torque-data-aggregation:linear;
             }
-            #catalonia_elections_twitter_test{
+            #catalonia2015{
               comp-op: screen;
               marker-opacity: 0.1;
               marker-line-color: #FFF;
@@ -39,8 +40,9 @@
               [value=4] { marker-fill: #FF5C00; }
               [value=5] { marker-fill: #850200; }
               [value=6] { marker-fill: #c3007f; }
+              [value=7] { marker-fill: #c3007f; }
             }
-            #catalonia_elections_twitter_test::point2 {
+            #catalonia2015::point2 {
               marker-width: 2;
               marker-fill: #229A00;
               marker-fill-opacity: 1;
@@ -53,8 +55,9 @@
               [value=4] { marker-fill: #FF5C00; }
               [value=5] { marker-fill: #850200; }
               [value=6] { marker-fill: #c3007f; }
+              [value=7] { marker-fill: #c3007f; }
             }
-            #catalonia_elections_twitter_test::point3 {
+            #catalonia2015::point3 {
               marker-width: 7;
               marker-fill: #229A00;
               marker-fill-opacity: 0;
@@ -66,81 +69,82 @@
               [value=3] { marker-line-color: #4b1e5b; }
               [value=4] { marker-line-color: #FF5C00; }
               [value=5] { marker-line-color: #850200; }
-              [value=6] { marker-line-color: #c3007f;}
+              [value=6] { marker-line-color: #c3007f; }
+              [value=7] { marker-line-color: #c3007f; }
             }
 
-            #catalonia_elections_twitter_test[frame-offset=1] {
+            #catalonia2015[frame-offset=1] {
               marker-opacity:0.45;
             }
-            #catalonia_elections_twitter_test[frame-offset=2]{
+            #catalonia2015[frame-offset=2]{
               marker-opacity:0.225;
             }
-            #catalonia_elections_twitter_test[frame-offset=3]{
+            #catalonia2015[frame-offset=3]{
               marker-opacity:0.15;
             }
-            #catalonia_elections_twitter_test[frame-offset=4]{
+            #catalonia2015[frame-offset=4]{
               marker-opacity:0.1125;
             }
-            #catalonia_elections_twitter_test[frame-offset=5] {
+            #catalonia2015[frame-offset=5] {
               marker-opacity:0.09;
             }
-            #catalonia_elections_twitter_test[frame-offset=6] {
+            #catalonia2015[frame-offset=6] {
               marker-opacity:0.075;
             }
-            #catalonia_elections_twitter_test[frame-offset=7] {
+            #catalonia2015[frame-offset=7] {
               marker-opacity:0.0642857142857143;
             }
 
 
 
-            #catalonia_elections_twitter_test::point2[frame-offset=1] {
+            #catalonia2015::point2[frame-offset=1] {
               marker-fill-opacity: .9;
             }
-            #catalonia_elections_twitter_test::point2[frame-offset=2] {
+            #catalonia2015::point2[frame-offset=2] {
               marker-fill-opacity: .8;
             }
-            #catalonia_elections_twitter_test::point2[frame-offset=3] {
+            #catalonia2015::point2[frame-offset=3] {
               marker-fill-opacity: .7;
             }
-            #catalonia_elections_twitter_test::point2[frame-offset=4] {
+            #catalonia2015::point2[frame-offset=4] {
               marker-fill-opacity: .6;
             }
-            #catalonia_elections_twitter_test::point2[frame-offset=5] {
+            #catalonia2015::point2[frame-offset=5] {
               marker-fill-opacity: .5;
             }
-            #catalonia_elections_twitter_test::point2[frame-offset=6] {
+            #catalonia2015::point2[frame-offset=6] {
               marker-fill-opacity: .2;
             }
-            #catalonia_elections_twitter_test::point2[frame-offset=7] {
+            #catalonia2015::point2[frame-offset=7] {
               marker-fill-opacity: .1;
             }
 
 
-            #catalonia_elections_twitter_test::point3[frame-offset=1] {
+            #catalonia2015::point3[frame-offset=1] {
               marker-width: 7;
               marker-line-opacity: .2;
             }
-            #catalonia_elections_twitter_test::point3[frame-offset=2] {
+            #catalonia2015::point3[frame-offset=2] {
               marker-width: 8;
               marker-line-opacity: .2;
             }
-            #catalonia_elections_twitter_test::point3[frame-offset=3] {
+            #catalonia2015::point3[frame-offset=3] {
               marker-width: 9;
               marker-line-opacity: .2;
             }
-            #catalonia_elections_twitter_test::point3[frame-offset=4] {
+            #catalonia2015::point3[frame-offset=4] {
               marker-width: 10;
               marker-line-opacity: .15;
             }
-            #catalonia_elections_twitter_test::point3[frame-offset=5] {
+            #catalonia2015::point3[frame-offset=5] {
               marker-width: 11;
               marker-line-opacity: .1;
             }
-            #catalonia_elections_twitter_test::point3[frame-offset=6] {
+            #catalonia2015::point3[frame-offset=6] {
               marker-width: 12;
               marker-line-opacity: .05;
             }
-            #catalonia_elections_twitter_test::point3[frame-offset=7] {
+            #catalonia2015::point3[frame-offset=7] {
               marker-width: 13;
               marker-line-opacity: 0;
             }
@@ -153,23 +157,25 @@
             </div>
             <ul class="list-partidos">
                 <li class="partido-01">
-                    <input type="checkbox" checked value="1" id="pp" name="partido"><label for="pp">NOS VAMOS</label>
+                    <input type="checkbox" checked value="1" id="junts" name="partido"><label for="junts">Junts pel sí</label>
                 </li>
                 <li class="partido-02">
-                    <input type="checkbox" checked value="2" id="psoe" name="partido"><label for="psoe">NOS QUEDAMOS</label>
+                    <input type="checkbox" checked value="2" id="cup" name="partido"><label for="cup">CUP</label>
                 </li>
                 <li class="partido-03">
-                    <input type="checkbox" disabled value="3" id="podemos" name="partido"><label for="podemos"></label>
+                    <input type="checkbox" checked value="3" id="ciudadanos" name="partido"><label for="ciudadanos">Ciudadanos</label>
                 </li>
                  <li class="partido-04">
-                    <label for="ciudadanos"></label><input type="checkbox" disabled value="4" id="ciudadanos" name="partido">
+                    <label for="pp">PP</label><input type="checkbox" checked value="4" id="pp" name="partido">
                 </li>
                 <li class="partido-05">
-                    <label for="iu"></label><input type="checkbox" disabled value="5" id="iu" name="partido">
+                    <label for="psc">PSC</label><input type="checkbox" checked value="5" id="psc" name="partido">
                 </li>
-
                 <li class="partido-06">
-                    <label for="upyd"></label> <input type="checkbox" disabled value="6" id="upyd" name="partido">
+                    <label for="catsi">Cat sí que es pot</label> <input type="checkbox" checked value="6" id="catsi" name="partido">
+                </li>
+                <li class="partido-07">
+                    <label for="unio">Unió</label> <input type="checkbox" checked value="7" id="unio" name="partido">
                 </li>
             </ul>
         </div>
@@ -190,10 +196,10 @@
             map.addLayer(basemapLayer);
 
             var animatedLayer = {
-                user_name: 'solutions',
+                user_name: 'kike-5',
                 type: 'torque',
                 options: {
-                    query: "SELECT * FROM catalonia_elections_twitter_test",
+                    query: "SELECT * FROM catalonia2015 where category_name in (1,2,3,4,5,6,7)",
                     cartocss: $("#cartocss").html()
                 }
             };
@@ -210,9 +216,9 @@
 
                 var newCSS = categories.map(function(c){
                     var val = '[value=' + c.category+ ']';
-                    return '#catalonia_elections_twitter_test' + val + '{marker-opacity: 0}' +
-                           '#catalonia_elections_twitter_test::point2' + val + '{marker-fill-opacity: 0}' +
-                           '#catalonia_elections_twitter_test::point3' + val + '{marker-line-opacity: 0}';
+                    return '#catalonia2015' + val + '{marker-opacity: 0}' +
+                           '#catalonia2015::point2' + val + '{marker-fill-opacity: 0}' +
+                           '#catalonia2015::point3' + val + '{marker-line-opacity: 0}';
                 }).join('\r\n');
 
                 if (newCSS) {

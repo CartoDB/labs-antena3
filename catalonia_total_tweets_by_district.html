@@ -1,6 +1,7 @@
 <html lang="en">
     <head>
-        <title>Catalonia total tweets by district</title>
+        <meta charset="utf-8" />
+        <title>Cataluña, tuits totales por distrito</title>
         <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css"/>
         <style type="text/css">
             body, html {
@@ -26,14 +27,14 @@
             });
 
             var dataLayer = {
-                user_name: 'solutions',
+                user_name: 'kike-5',
                 type: 'cartodb',
                 sublayers: [{
                     sql: "" +
-                        "SELECT solutions.catalonia.*, count(solutions.catalonia_elections_twitter_test.the_geom) as numtweets " +
-                        "FROM solutions.catalonia LEFT JOIN solutions.catalonia_elections_twitter_test " +
-                        "ON st_contains(solutions.catalonia.the_geom,solutions.catalonia_elections_twitter_test.the_geom) " +
-                        "GROUP BY solutions.catalonia.cartodb_id",
+                        "SELECT catalonia.*, count(catalonia2015.the_geom) as numtweets " +
+                        "FROM catalonia LEFT JOIN catalonia2015 " +
+                        "ON st_contains(catalonia.the_geom,catalonia2015.the_geom) " +
+                        "GROUP BY catalonia.cartodb_id",
                     cartocss: "" +
                         "#catalonia{" +
                         "  polygon-fill: #FFFFB2;" +

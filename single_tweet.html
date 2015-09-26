@@ -1,6 +1,7 @@
 <html lang="en">
     <head>
-        <title>Single tweet</title>
+        <meta charset="utf-8" />
+        <title>Tuit único</title>
         <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css"/>
         <style type="text/css">
             body, html {
@@ -31,21 +32,21 @@
             map.addLayer(basemapLayer);
 
             var dataLayer = {
-                user_name: 'solutions',
+                user_name: 'kike-5',
                 type: 'cartodb',
                 sublayers: [{
                     sql: "" +
-                        "SELECT ST_Transform(ST_Segmentize(ST_MakeLine(ST_Transform(the_geom, 953027), ST_Transform(ST_SetSRID(ST_MakePoint(0, 40), 4326), 953027)), 100000), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test",
+                        "SELECT ST_Transform(ST_Segmentize(ST_MakeLine(ST_Transform(the_geom, 953027), ST_Transform(ST_SetSRID(ST_MakePoint(0, 40), 4326), 953027)), 100000), 3857) as the_geom_webmercator, category_name from catalonia2015",
                     cartocss: "" +
-                        "#catalonia_elections_twitter_test{" +
+                        "#catalonia2015{" +
                         "  line-color: #000000;" +
                         "  line-width: 0.5;" +
                         "  line-opacity: .2;" +
                         "}" +
-                        "#catalonia_elections_twitter_test [ category_name = 1] {" +
+                        "#catalonia2015 [ category_name = 1] {" +
                         "  line-color: #FF0000;" +
                         "}" +
-                        "#catalonia_elections_twitter_test [ category_name = 2] {" +
+                        "#catalonia2015 [ category_name = 2] {" +
                         "  line-color: #00FF00;" +
                         "}"
                 }]

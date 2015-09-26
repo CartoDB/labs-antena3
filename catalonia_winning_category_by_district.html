@@ -1,6 +1,7 @@
 <html lang="en">
     <head>
-        <title>Catalonia winning Twitter category by district</title>
+        <meta charset="utf-8" />
+        <title>Cataluña partido ganador por distrito</title>
         <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css"/>
         <style type="text/css">
             body, html {
@@ -26,17 +27,21 @@
             });
 
             var dataLayer = {
-                user_name: 'solutions',
+                user_name: 'kike-5',
                 type: 'cartodb',
                 sublayers: [{
                     sql: "" +
                         "SELECT DISTINCT ON (h.cartodb_id) h.the_geom_webmercator, count(c.the_geom) AS ct, c.category_name, " +
-                        "CASE WHEN category_name=1 THEN 'Nos vamos' " +
-                        "     WHEN category_name=2 THEN 'Nos quedamos' " +
-                        "     ELSE 'otros' " +
+                        "CASE WHEN c.category_name=1 THEN 'Junts pel sí' " +
+                        "     WHEN c.category_name=2 THEN 'CUP' " +
+                        "     WHEN c.category_name=3 THEN 'Ciudadanos' " +
+                        "     WHEN c.category_name=4 THEN 'PP' " +
+                        "     WHEN c.category_name=5 THEN 'PSC' " +
+                        "     WHEN c.category_name=6 THEN 'Cat sí que es pot' " +
+                        "     WHEN c.category_name=7 THEN 'Unió' " +
                         "END " +
                         "FROM catalonia h " +
-                        "LEFT JOIN catalonia_elections_twitter_test c ON ST_Within(c.the_geom, h.the_geom) " +
+                        "LEFT JOIN catalonia2015 c ON c.category_name in (1,2,3,4,5,6,7) AND ST_Within(c.the_geom, h.the_geom) " +
                         "GROUP  BY h.cartodb_id, c.category_name " +
                         "ORDER  BY h.cartodb_id, count(c.the_geom) DESC, c.category_name;",
                     cartocss: "" +
@@ -65,6 +70,21 @@
                         "}" +
                         "#catalonia [ category_name = 2] {" +
                         "  polygon-fill: #00FF00;" +
+                        "}" +
+                        "#catalonia [ category_name = 3] {" +
+                        "  polygon-fill: #FF00FF;" +
+                        "}" +
+                        "#catalonia [ category_name = 4] {" +
+                        "  polygon-fill: #00FFFF;" +
+                        "}" +
+                        "#catalonia [ category_name = 5] {" +
+                        "  polygon-fill: #FFFF00;" +
+                        "}" +
+                        "#catalonia [ category_name = 6] {" +
+                        "  polygon-fill: #00FFFF;" +
+                        "}" +
+                        "#catalonia [ category_name = 7] {" +
+                        "  polygon-fill: #000000;" +
                         "}"
                 }]
             };
