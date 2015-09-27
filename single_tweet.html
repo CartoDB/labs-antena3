@@ -32,26 +32,73 @@
             map.addLayer(basemapLayer);
 
             var dataLayer = {
-                user_name: 'kike-5',
+                user_name: 'solutions',
                 type: 'cartodb',
                 sublayers: [{
                     sql: "" +
-                        "SELECT ST_Transform(ST_Segmentize(ST_MakeLine(ST_Transform(the_geom, 953027), ST_Transform(ST_SetSRID(ST_MakePoint(0, 40), 4326), 953027)), 100000), 3857) as the_geom_webmercator, category_name from catalonia2015",
+                        "SELECT ST_Transform(" +
+                        "           ST_Segmentize(" +
+                        "               ST_MakeLine(" +
+                        "                   ST_Transform(the_geom, 953027)," +
+                        "                   ST_Transform(ST_SetSRID(ST_MakePoint(0, 40), 4326), 953027)" +
+                        "               )," +
+                        "               100000" +
+                        "           ), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test",
                     cartocss: "" +
-                        "#catalonia2015{" +
+                        "#catalonia_elections_twitter_test{" +
                         "  line-color: #000000;" +
                         "  line-width: 0.5;" +
                         "  line-opacity: .2;" +
                         "}" +
-                        "#catalonia2015 [ category_name = 1] {" +
+                        "#catalonia_elections_twitter_test [ category_name = 1] {" +
                         "  line-color: #FF0000;" +
                         "}" +
-                        "#catalonia2015 [ category_name = 2] {" +
+                        "#catalonia_elections_twitter_test [ category_name = 2] {" +
                         "  line-color: #00FF00;" +
                         "}"
                 }]
             };
             cartodb.createLayer(map, dataLayer).addTo(map);
+
+            var animatedLayer = {
+                user_name: 'solutions',
+                type: 'torque',
+                options: {
+                    query: "" +
+                        "with lines as (SELECT ST_Transform(" +
+                        "           ST_Segmentize(" +
+                        "               ST_MakeLine(" +
+                        "                   ST_Transform(the_geom, 953027)," +
+                        "                   ST_Transform(ST_SetSRID(ST_MakePoint(0, 40), 4326), 953027)" +
+                        "               )," +
+                        "               100000" +
+                        "           ), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test) " +
+"select ST_Line_Interpolate_Point(lines.the_geom_webmercator," +
+"    generate_series(0, 10):: double precision / 10" +
+"  ) as the_geom_webmercator, generate_series(0, 10) as step, category_name from lines",
+            cartocss: 'Map {' +
+                              '  -torque-frame-count:10;' +
+                              '  -torque-animation-duration:3;' +
+                              '  -torque-time-attribute:"step";' +
+                              '  -torque-aggregation-function:"CDB_Math_Mode(category_name)";' +
+                              '  -torque-resolution:2;' +
+                              '  -torque-data-aggregation:linear' +
+                              '}' +
+                              '#catalonia_elections_twitter_test{' +
+                              '  comp-op:lighter;' +
+                              '  marker-opacity:1;' +
+                              '  marker-line-color:#FFF;' +
+                              '  marker-line-width:0;' +
+                              '  marker-line-opacity:1;' +
+                              '  marker-type:ellipse;' +
+                              '  marker-width:2;' +
+                              '  marker-fill:#F90' +
+                              '}' +
+                              '#catalonia_elections_twitter_test[value=1]{marker-fill:#ff0000}' +
+                              '#catalonia_elections_twitter_test[value=2]{marker-fill:#00ff00}'
+                }
+            };
+            cartodb.createLayer(map, animatedLayer).addTo(map);
         </script>
     </body>
 </html>
