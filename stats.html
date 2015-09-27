@@ -79,15 +79,14 @@
                     color: "#aaaaaa"
                 }
             };
-            var partyColors = d3.scale.ordinal()
-                    .range(['#E14B5C', '#FEEB34', '#EF7A36', '#0BB2FF', '#E01122', '#B71A43', '#0152AD']);
+            var partyColors = ['#E14B5C', '#FEEB34', '#EF7A36', '#0BB2FF', '#E01122', '#B71A43', '#0152AD'];
 
             function getCategoryName(categoryId) {
                 return categories[categoryId].name;
             }
         </script>
         <script>
-            function drawPieChart(selector, dataset, color) {
+            function drawPieChart(selector, dataset, range) {
                 var width = 360;
                 var height = 360;
                 var maxLegendWidth = 300;
@@ -97,7 +96,7 @@
                 var totalWidth = width + legendSpacing + maxLegendWidth;
 
                 var radius = Math.min(width, height) / 2;
-                color = color || d3.scale.category20b();
+                var color = range ? d3.scale.ordinal().range(range) : d3.scale.category20b();
                 var svg = d3.select(selector)
                         .append('svg')
                         .attr('width', totalWidth)
@@ -188,16 +187,18 @@
         <script>
             function getTweetsPerPartyInBarcelona() {
                 sql.execute("" +
-                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, " +
+                        "sum(count(catalonia2015.the_geom)) over () as total_tweets, name, category_name from catalonia2015 " +
                         "JOIN spain_provinces " +
                         "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
-                        "WHERE gn_a1_code = 'ES.B' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name ",
-                        "ORDER BY category_name ORDER BY num_tweets DESC")
+                        "WHERE gn_a1_code = 'ES.B' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name " +
+                        "ORDER BY num_tweets DESC")
                         .done(function (data) {
                             var dataset = [];
                             for (var i = 0; i < data.rows.length; i++) {
+                                var perCent = parseInt(parseInt(data.rows[i].num_tweets) * 100 / parseInt(data.rows[i].total_tweets));
                                 dataset.push({
-                                    label: getCategoryName(data.rows[i].category_name),
+                                    label: getCategoryName(data.rows[i].category_name) + " (" + perCent + "%)",
                                     count: data.rows[i].num_tweets
                                 });
                             }
@@ -208,16 +209,18 @@
         <script>
             function getTweetsPerPartyInGirona() {
                 sql.execute("" +
-                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, " +
+                        "sum(count(catalonia2015.the_geom)) over () as total_tweets, name, category_name from catalonia2015 " +
                         "JOIN spain_provinces " +
                         "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
-                        "WHERE gn_a1_code = 'ES.GI' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name ",
-                        "ORDER BY category_name")
+                        "WHERE gn_a1_code = 'ES.GI' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name " +
+                        "ORDER BY num_tweets DESC")
                         .done(function (data) {
                             var dataset = [];
                             for (var i = 0; i < data.rows.length; i++) {
+                                var perCent = parseInt(parseInt(data.rows[i].num_tweets) * 100 / parseInt(data.rows[i].total_tweets));
                                 dataset.push({
-                                    label: getCategoryName(data.rows[i].category_name),
+                                    label: getCategoryName(data.rows[i].category_name) + " (" + perCent + "%)",
                                     count: data.rows[i].num_tweets
                                 });
                             }
@@ -228,16 +231,18 @@
         <script>
             function getTweetsPerPartyInLleida() {
                 sql.execute("" +
-                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, " +
+                        "sum(count(catalonia2015.the_geom)) over () as total_tweets, name, category_name from catalonia2015 " +
                         "JOIN spain_provinces " +
                         "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
-                        "WHERE gn_a1_code = 'ES.L' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name ",
-                        "ORDER BY category_name")
+                        "WHERE gn_a1_code = 'ES.L' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name " +
+                        "ORDER BY num_tweets DESC")
                         .done(function (data) {
                             var dataset = [];
                             for (var i = 0; i < data.rows.length; i++) {
+                                var perCent = parseInt(parseInt(data.rows[i].num_tweets) * 100 / parseInt(data.rows[i].total_tweets));
                                 dataset.push({
-                                    label: getCategoryName(data.rows[i].category_name),
+                                    label: getCategoryName(data.rows[i].category_name) + " (" + perCent + "%)",
                                     count: data.rows[i].num_tweets
                                 });
                             }
@@ -248,19 +253,23 @@
         <script>
             function getTweetsPerPartyInTarragona() {
                 sql.execute("" +
-                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, " +
+                        "sum(count(catalonia2015.the_geom)) over () as total_tweets, name, category_name from catalonia2015 " +
                         "JOIN spain_provinces " +
                         "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
-                        "WHERE gn_a1_code = 'ES.T' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name ",
-                        "ORDER BY category_name")
+                        "WHERE gn_a1_code = 'ES.T' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name " +
+                        "ORDER BY num_tweets DESC")
                         .done(function (data) {
                             var dataset = [];
+                            console.log(data);
                             for (var i = 0; i < data.rows.length; i++) {
+                                var perCent = parseInt(parseInt(data.rows[i].num_tweets) * 100 / parseInt(data.rows[i].total_tweets));
                                 dataset.push({
-                                    label: getCategoryName(data.rows[i].category_name),
+                                    label: getCategoryName(data.rows[i].category_name) + " (" + perCent + "%)",
                                     count: data.rows[i].num_tweets
                                 });
                             }
+                            console.log(dataset);
                             drawPieChart("#tweets_per_party_in_tarragona", dataset, partyColors);
                         });
             }
@@ -268,7 +277,6 @@
         <script>
             sql.execute("SELECT count(*) as num_tweets FROM catalonia2015")
             .done(function (data) {
-                $("#total_tweets").text(data.rows[0].num_tweets);
                 totalTweets = parseInt(data.rows[0].num_tweets);
                 sql.execute("" +
                             "SELECT count(catalonia2015.the_geom) as num_tweets from catalonia2015 " +
@@ -277,6 +285,7 @@
                             "WHERE gn_a1_code = 'ES.B' OR gn_a1_code = 'ES.GI' OR gn_a1_code = 'ES.L' OR gn_a1_code = 'ES.T'")
                 .done(function (data) {
                     cataloniaTweets = parseInt(data.rows[0].num_tweets);
+                    $("#total_tweets").text(totalTweets.toString() + ", " + cataloniaTweets.toString() + " en Cataluña (" + parseInt(cataloniaTweets * 100 / totalTweets).toString() + "%)");
                     getTweetsPerProvince();
                     getTweetsPerParty();
                     getTweetsPerPartyInBarcelona();
