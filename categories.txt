@@ -1,37 +1,37 @@
 1: {
     name: "Junts pel sí",
     id: "junts",
-    color: "#ffffff"
+    color: "#E14B5C"
 },
 2: {
     name: "CUP",
     id: "cup",
-    color: "#ffffff"
+    color: "#FEEB34"
 },
 3: {
     name: "Ciudadanos",
     id: "ciudadanos",
-    color: "#ffffff"
+    color: "#EF7A36"
 },
 4: {
     name: "PP",
     id: "pp",
-    color: "#ffffff"
+    color: "#0BB2FF"
 },
 5: {
     name: "PSC",
     id: "psc",
-    color: "#ffffff"
+    color: "#E01122"
 },
 6: {
     name: "Cat sí que es pot",
     id: "catsi",
-    color: "#ffffff"
+    color: "#B71A43"
 },
 7: {
     name: "Unió",
     id: "unio",
-    color: "#ffffff"
+    color: "#0152AD"
 },
 8: {
     name: "Independencia sí",

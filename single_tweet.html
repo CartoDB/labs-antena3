@@ -50,15 +50,14 @@
                         "}"
                 }]
             };
-            cartodb.createLayer(map, world).addTo(map);
-
-
-            var basemapLayer = {
-                user_name: 'solutions',
-                type: 'cartodb',
-                sublayers: [{
-                    sql: "SELECT * FROM spain_provinces",
-                    cartocss: "" +
+            cartodb.createLayer(map, world).addTo(map)
+            .done(function () {
+                var basemapLayer = {
+                    user_name: 'solutions',
+                    type: 'cartodb',
+                    sublayers: [{
+                        sql: "SELECT * FROM spain_provinces",
+                        cartocss: "" +
                         "#spain_provinces{" +
                         "  polygon-fill: #0d0d0d;" +
                         "  polygon-opacity: 1;" +
@@ -66,84 +65,82 @@
                         "  line-width: 0.5;" +
                         "  line-opacity: 1;" +
                         "}"
-                }]
-            };
-            cartodb.createLayer(map, basemapLayer).addTo(map);
+                    }]
+                };
+                cartodb.createLayer(map, basemapLayer).addTo(map)
+                .done(function () {
+                    var dataLayer = {
+                        user_name: 'solutions',
+                        type: 'cartodb',
+                        sublayers: [{
+                            sql: "" +
+                            "SELECT ST_Transform(" +
+                            "           ST_Segmentize(" +
+                            "               ST_MakeLine(" +
+                            "                   ST_Transform(the_geom, 953027)," +
+                            "                   ST_Transform(ST_SetSRID(ST_MakePoint(2.1487679, 41.39479), 4326), 953027)" +
+                            "               )," +
+                            "               100000" +
+                            "           ), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test order by cartodb_id limit 5000",
+                            cartocss: "" +
+                            "#catalonia_elections_twitter_test{" +
+                            "  line-color: #000000;" +
+                            "  line-width: 1;" +
+                            "  line-opacity: .01;" +
+                            "}" +
+                            "#catalonia_elections_twitter_test [ category_name = 1] {" +
+                            "  line-color: #FFF;" +
+                            "}" +
+                            "#catalonia_elections_twitter_test [ category_name = 2] {" +
+                            "  line-color: #FFF;" +
+                            "}"
+                        }]
+                    };
+                    cartodb.createLayer(map, dataLayer).addTo(map)
+                    .done(function () {
 
-
-
-
-
-
-
-            var dataLayer = {
-                user_name: 'solutions',
-                type: 'cartodb',
-                sublayers: [{
-                    sql: "" +
-                        "SELECT ST_Transform(" +
-                        "           ST_Segmentize(" +
-                        "               ST_MakeLine(" +
-                        "                   ST_Transform(the_geom, 953027)," +
-                        "                   ST_Transform(ST_SetSRID(ST_MakePoint(2.1487679, 41.39479), 4326), 953027)" +
-                        "               )," +
-                        "               100000" +
-                        "           ), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test order by cartodb_id limit 5000",
-                    cartocss: "" +
-                        "#catalonia_elections_twitter_test{" +
-                        "  line-color: #000000;" +
-                        "  line-width: 1;" +
-                        "  line-opacity: .01;" +
-                        "}" +
-                        "#catalonia_elections_twitter_test [ category_name = 1] {" +
-                        "  line-color: #FFF;" +
-                        "}" +
-                        "#catalonia_elections_twitter_test [ category_name = 2] {" +
-                        "  line-color: #FFF;" +
-                        "}"
-                }]
-            };
-            cartodb.createLayer(map, dataLayer).addTo(map);
-
-            var animatedLayer = {
-                user_name: 'solutions',
-                type: 'torque',
-                options: {
-                    query: "" +
-                        "with lines as (SELECT ST_Transform(" +
-                        "           ST_Segmentize(" +
-                        "               ST_MakeLine(" +
-                        "                   ST_Transform(the_geom, 953027)," +
-                        "                   ST_Transform(ST_SetSRID(ST_MakePoint(2.1487679, 41.39479), 4326), 953027)" +
-                        "               )," +
-                        "               100000" +
-                        "           ), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test order by cartodb_id limit 5000) " +
-"select ST_Line_Interpolate_Point(lines.the_geom_webmercator," +
-"    generate_series(0, 100):: double precision / 100" +
-"  ) as the_geom_webmercator, (100 - generate_series(0, 100)) as step, category_name from lines",
-            cartocss: 'Map {' +
-                              '  -torque-frame-count:100;' +
-                              '  -torque-animation-duration:3;' +
-                              '  -torque-time-attribute:"step";' +
-                              '  -torque-aggregation-function:"CDB_Math_Mode(category_name)";' +
-                              '  -torque-resolution:2;' +
-                              '  -torque-data-aggregation:linear' +
-                              '}' +
-                              '#catalonia_elections_twitter_test{' +
-                              '  comp-op:lighter;' +
-                              '  marker-opacity:1;' +
-                              '  marker-line-color:#FA3832;' +
-                              '  marker-line-width:1;' +
-                              '  marker-line-opacity:.1;' +
-                              '  marker-type:ellipse;' +
-                              '  marker-width:3;' +
-                              '  marker-fill:#F90' +
-                              '}' +
-                              '#catalonia_elections_twitter_test[value=1]{marker-fill:#FA3832}' +
-                              '#catalonia_elections_twitter_test[value=2]{marker-fill:#FA3832}'
-                }
-            };
-            cartodb.createLayer(map, animatedLayer).addTo(map);
+                        var animatedLayer = {
+                            user_name: 'solutions',
+                            type: 'torque',
+                            options: {
+                                query: "" +
+                                "with lines as (SELECT (random() * 100) as start_step, ST_Transform(" +
+                                "           ST_Segmentize(" +
+                                "               ST_MakeLine(" +
+                                "                   ST_Transform(the_geom, 953027)," +
+                                "                   ST_Transform(ST_SetSRID(ST_MakePoint(2.1487679, 41.39479), 4326), 953027)" +
+                                "               )," +
+                                "               100000" +
+                                "           ), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test order by cartodb_id limit 5000) " +
+                                "select ST_Line_Interpolate_Point(lines.the_geom_webmercator," +
+                                "    generate_series(0, 100):: double precision / 100" +
+                                ") as the_geom_webmercator, (lines.start_step + 100 - generate_series(0, 100)) as step, category_name from lines",
+                                cartocss: 'Map {' +
+                                '  -torque-frame-count:200;' +
+                                '  -torque-animation-duration:10;' +
+                                '  -torque-time-attribute:"step";' +
+                                '  -torque-aggregation-function:"CDB_Math_Mode(category_name)";' +
+                                '  -torque-resolution:2;' +
+                                '  -torque-data-aggregation:linear' +
+                                '}' +
+                                '#catalonia_elections_twitter_test{' +
+                                '  comp-op:lighter;' +
+                                '  marker-opacity:1;' +
+                                '  marker-line-color:#FA3832;' +
+                                '  marker-line-width:1;' +
+                                '  marker-line-opacity:.1;' +
+                                '  marker-type:ellipse;' +
+                                '  marker-width:3;' +
+                                '  marker-fill:#F90' +
+                                '}' +
+                                '#catalonia_elections_twitter_test[value=1]{marker-fill:#FA3832}' +
+                                '#catalonia_elections_twitter_test[value=2]{marker-fill:#FA3832}'
+                            }
+                        };
+                        cartodb.createLayer(map, animatedLayer).addTo(map);
+                    });
+                });
+            });
         </script>
     </body>
 </html>

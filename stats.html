@@ -1,0 +1,290 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Antena3 elecciones catalanas 2015</title>
+        <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="css/styleguide.min.css"/>
+    </head>
+    <body>
+        <h2>Tuits totales</h2>
+        <p id="total_tweets"></p>
+        <h2>Tuits por provincia</h2>
+        <div id="tweets_per_province"></div>
+        <h2>Tuits por partido</h2>
+        <div id="tweets_per_party"></div>
+        <h2>Tuits por partido y provincia</h2>
+        <h3>Barcelona</h3>
+        <div id="tweets_per_party_in_barcelona"></div>
+        <h3>Gerona</h3>
+        <div id="tweets_per_party_in_girona"></div>
+        <h3>Lérida</h3>
+        <div id="tweets_per_party_in_lleida"></div>
+        <h3>Tarragona</h3>
+        <div id="tweets_per_party_in_tarragona"></div>
+
+        <script src="js/d3.min.js"></script>
+        <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+        <script>
+            var totalTweets;
+            var cataloniaTweets;
+            var categories = {
+                1: {
+                    name: "Junts pel sí",
+                    id: "junts",
+                    color: "#E14B5C"
+                },
+                2: {
+                    name: "CUP",
+                    id: "cup",
+                    color: "#FEEB34"
+                },
+                3: {
+                    name: "Ciudadanos",
+                    id: "ciudadanos",
+                    color: "#EF7A36"
+                },
+                4: {
+                    name: "PP",
+                    id: "pp",
+                    color: "#0BB2FF"
+                },
+                5: {
+                    name: "PSC",
+                    id: "psc",
+                    color: "#E01122"
+                },
+                6: {
+                    name: "Cat sí que es pot",
+                    id: "catsi",
+                    color: "#B71A43"
+                },
+                7: {
+                    name: "Unió",
+                    id: "unio",
+                    color: "#0152AD"
+                },
+                8: {
+                    name: "Independencia sí",
+                    id: "indsi",
+                    color: "#ffff00"
+                },
+                9: {
+                    name: "Independencia no",
+                    id: "indno",
+                    color: "#0000ff"
+                },
+                10: {
+                    name: "Global",
+                    id: "global",
+                    color: "#aaaaaa"
+                }
+            };
+            var partyColors = d3.scale.ordinal()
+                    .range(['#E14B5C', '#FEEB34', '#EF7A36', '#0BB2FF', '#E01122', '#B71A43', '#0152AD']);
+
+            function getCategoryName(categoryId) {
+                return categories[categoryId].name;
+            }
+        </script>
+        <script>
+            function drawPieChart(selector, dataset, color) {
+                var width = 360;
+                var height = 360;
+                var maxLegendWidth = 300;
+                var legendRectSize = 18;
+                var legendSpacing = 4;
+
+                var totalWidth = width + legendSpacing + maxLegendWidth;
+
+                var radius = Math.min(width, height) / 2;
+                var color = color || d3.scale.category20b();
+                var svg = d3.select(selector)
+                        .append('svg')
+                        .attr('width', totalWidth)
+                        .attr('height', height)
+                        .append('g')
+                        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+                var arc = d3.svg.arc()
+                        .outerRadius(radius);
+                var pie = d3.layout.pie()
+                        .value(function (d) {
+                            return d.count;
+                        })
+                        .sort(null);
+                var path = svg.selectAll('path')
+                        .data(pie(dataset))
+                        .enter()
+                        .append('path')
+                        .attr('d', arc)
+                        .attr('fill', function (d, i) {
+                            return color(d.data.label);
+                        });
+
+                var legend = svg.selectAll('.legend')
+                    .data(color.domain())
+                    .enter()
+                    .append('g')
+                    .attr('class', 'legend')
+                    .attr('transform', function(d, i) {
+                var height = legendRectSize + legendSpacing;
+                var offset =  height * color.domain().length / 2;
+                var horz = (width / 2) + legendSpacing;
+                var vert = i * height - offset;
+                    return 'translate(' + horz + ',' + vert + ')';
+                });
+                legend.append('rect')
+                    .attr('width', legendRectSize)
+                    .attr('height', legendRectSize)
+                    .style('fill', color)
+                    .style('stroke', color);
+                legend.append('text')
+                    .attr('x', legendRectSize + legendSpacing)
+                    .attr('y', legendRectSize - legendSpacing)
+                    .text(function(d) { return d; });
+            }
+        </script>
+        <script>
+            var sql = new cartodb.SQL({user: 'kike-5'});
+        </script>
+        <script>
+            function getTweetsPerProvince() {
+                sql.execute("" +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, name from catalonia2015 " +
+                        "JOIN spain_provinces " +
+                        "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
+                        "WHERE gn_a1_code = 'ES.B' OR gn_a1_code = 'ES.GI' OR gn_a1_code = 'ES.L' OR gn_a1_code = 'ES.T' GROUP BY name")
+                        .done(function (data) {
+                            var dataset = [];
+                            for (var i = 0; i < data.rows.length; i++) {
+                                var perCentGlobal = parseInt(parseInt(data.rows[i].num_tweets) * 100 / totalTweets);
+                                var perCentCatalonia = parseInt(parseInt(data.rows[i].num_tweets) * 100 / cataloniaTweets);
+                                dataset.push({
+                                    label: data.rows[i].name + "(" + perCentCatalonia + "% CAT, " + perCentGlobal + "% TOT)",
+                                    count: data.rows[i].num_tweets
+                                });
+                            }
+                            drawPieChart("#tweets_per_province", dataset);
+                        });
+            }
+        </script>
+        <script>
+            function getTweetsPerParty() {
+                var sql = new cartodb.SQL({user: 'kike-5'});
+                sql.execute("SELECT count(*) as num_tweets, category_name FROM catalonia2015 WHERE category_name IN (1,2,3,4,5,6,7) GROUP BY category_name")
+                        .done(function (data) {
+                            var dataset = [];
+                            for (var i = 0; i < data.rows.length; i++) {
+                                var perCentGlobal = parseInt(parseInt(data.rows[i].num_tweets) * 100 / totalTweets);
+                                var perCentCatalonia = parseInt(parseInt(data.rows[i].num_tweets) * 100 / cataloniaTweets);
+                                dataset.push({
+                                    label: getCategoryName(data.rows[i].category_name) + "(" + perCentCatalonia + "% CAT, " + perCentGlobal + "% TOT)",
+                                    count: data.rows[i].num_tweets
+                                });
+                            }
+                            drawPieChart("#tweets_per_party", dataset, partyColors);
+                        });
+            }
+        </script>
+        <script>
+            function getTweetsPerPartyInBarcelona() {
+                sql.execute("" +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
+                        "JOIN spain_provinces " +
+                        "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
+                        "WHERE gn_a1_code = 'ES.B' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name ",
+                        "ORDER BY category_name")
+                        .done(function (data) {
+                            var dataset = [];
+                            for (var i = 0; i < data.rows.length; i++) {
+                                dataset.push({
+                                    label: getCategoryName(data.rows[i].category_name),
+                                    count: data.rows[i].num_tweets
+                                });
+                            }
+                            drawPieChart("#tweets_per_party_in_barcelona", dataset, partyColors);
+                        });
+            }
+        </script>
+        <script>
+            function getTweetsPerPartyInGirona() {
+                sql.execute("" +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
+                        "JOIN spain_provinces " +
+                        "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
+                        "WHERE gn_a1_code = 'ES.GI' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name ",
+                        "ORDER BY category_name")
+                        .done(function (data) {
+                            var dataset = [];
+                            for (var i = 0; i < data.rows.length; i++) {
+                                dataset.push({
+                                    label: getCategoryName(data.rows[i].category_name),
+                                    count: data.rows[i].num_tweets
+                                });
+                            }
+                            drawPieChart("#tweets_per_party_in_girona", dataset, partyColors);
+                        });
+            }
+        </script>
+        <script>
+            function getTweetsPerPartyInLleida() {
+                sql.execute("" +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
+                        "JOIN spain_provinces " +
+                        "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
+                        "WHERE gn_a1_code = 'ES.L' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name ",
+                        "ORDER BY category_name")
+                        .done(function (data) {
+                            var dataset = [];
+                            for (var i = 0; i < data.rows.length; i++) {
+                                dataset.push({
+                                    label: getCategoryName(data.rows[i].category_name),
+                                    count: data.rows[i].num_tweets
+                                });
+                            }
+                            drawPieChart("#tweets_per_party_in_lleida", dataset, partyColors);
+                        });
+            }
+        </script>
+        <script>
+            function getTweetsPerPartyInTarragona() {
+                sql.execute("" +
+                        "SELECT count(catalonia2015.the_geom) as num_tweets, name, category_name from catalonia2015 " +
+                        "JOIN spain_provinces " +
+                        "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
+                        "WHERE gn_a1_code = 'ES.T' AND category_name IN (1,2,3,4,5,6,7) GROUP BY name, category_name ",
+                        "ORDER BY category_name")
+                        .done(function (data) {
+                            var dataset = [];
+                            for (var i = 0; i < data.rows.length; i++) {
+                                dataset.push({
+                                    label: getCategoryName(data.rows[i].category_name),
+                                    count: data.rows[i].num_tweets
+                                });
+                            }
+                            drawPieChart("#tweets_per_party_in_tarragona", dataset, partyColors);
+                        });
+            }
+        </script>
+        <script>
+            sql.execute("SELECT count(*) as num_tweets FROM catalonia2015")
+            .done(function (data) {
+                $("#total_tweets").text(data.rows[0].num_tweets);
+                totalTweets = parseInt(data.rows[0].num_tweets);
+                sql.execute("" +
+                            "SELECT count(catalonia2015.the_geom) as num_tweets from catalonia2015 " +
+                            "JOIN spain_provinces " +
+                            "ON st_contains(spain_provinces.the_geom, catalonia2015.the_geom) " +
+                            "WHERE gn_a1_code = 'ES.B' OR gn_a1_code = 'ES.GI' OR gn_a1_code = 'ES.L' OR gn_a1_code = 'ES.T'")
+                .done(function (data) {
+                    cataloniaTweets = parseInt(data.rows[0].num_tweets);
+                    getTweetsPerProvince();
+                    getTweetsPerParty();
+                    getTweetsPerPartyInBarcelona();
+                    getTweetsPerPartyInGirona();
+                    getTweetsPerPartyInLleida();
+                    getTweetsPerPartyInTarragona();
+                });
+            });
+        </script>
+    </body>
+</html>
