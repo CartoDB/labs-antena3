@@ -12,7 +12,7 @@
             #map {
                 height: 100%;
                 width: 100%;
-                background: #fff
+                background: #232325;
             }
         </style>
     </head>
@@ -20,16 +20,53 @@
         <div id="map"></div>
         <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
         <script>
+            function getParameterByName(name) {
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search);
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+
             var map = L.map('map', {
-                scrollWheelZoom: true,
-                center: [0, 0],
-                zoom: 2
+                scrollWheelZoom: false,
+                center: [39.5, -4.362060546875],
+                zoom: getParameterByName('zoom') || 2
             });
 
-            var basemapLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-            });
-            map.addLayer(basemapLayer);
+            var world = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT * FROM tm_world_borders_0_3 where name NOT LIKE 'Spain'",
+                    cartocss: "" +
+                        "#tm_world_borders_0_3{" +
+                        "  polygon-fill: #0d0d0d;" +
+                        "  polygon-opacity: 1;" +
+                        "  line-color: #2f2f2f;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: 1;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, world).addTo(map);
+
+
+            var basemapLayer = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT * FROM spain_provinces",
+                    cartocss: "" +
+                        "#spain_provinces{" +
+                        "  polygon-fill: #0d0d0d;" +
+                        "  polygon-opacity: 1;" +
+                        "  line-color: #2f2f2f;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: 1;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, basemapLayer).addTo(map);
 
             var animatedLayer = {
                 user_name: 'kike-5',
@@ -40,6 +77,8 @@
                 }
             };
             cartodb.createLayer(map, animatedLayer).addTo(map);
+
+
         </script>
     </body>
 </html>
