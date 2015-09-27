@@ -72,8 +72,21 @@
                       user_name: 'kike-5',
                       type: 'torque',
                       options: {
-                          query: "SELECT * FROM catalonia2015 where category_name = 10"+
-                          "and postedtime > '2015-09-27 07:00'",
+                          query: "" +
+                              "with tweets_in_canary_islands as" +
+                              "(select cartodb_id, the_geom, postedtime, category_name from catalonia2015 where category_name = 10 and postedtime > '2015-09-27 07:00' " +
+                              "and ST_Intersects(the_geom, ST_MakeEnvelope(-18.748169,27.571591,-13.342896,29.463514,4326))), " +
+                              "tweets_not_in_canary_islands as " +
+                              "(select cartodb_id, the_geom, postedtime, category_name, the_geom_webmercator from catalonia2015 where category_name = 10 and postedtime > '2015-09-27 07:00' " +
+                              "and not ST_Intersects(the_geom, ST_MakeEnvelope(-18.748169,27.571591,-13.342896,29.463514,4326))) " +
+                              "SELECT tweets_not_in_canary_islands.*  " +
+                              "from tweets_not_in_canary_islands " +
+                              "JOIN spain_simplified_split  " +
+                              "ON st_contains(spain_simplified_split.the_geom, tweets_not_in_canary_islands.the_geom) " +
+                              "UNION " +
+                              "SELECT tweets_in_canary_islands.*, ST_Transform(ST_Translate(tweets_in_canary_islands.the_geom,5.0,7.4), 3857) as the_geom_webmercator from tweets_in_canary_islands  " +
+                              "JOIN spain_simplified_split " +
+                              "ON st_contains(spain_simplified_split.the_geom, tweets_in_canary_islands.the_geom)",
                           cartocss: 'Map {-torque-frame-count:512;-torque-animation-duration:30;-torque-time-attribute:"postedtime";-torque-aggregation-function:"CDB_Math_Mode(category_name)";-torque-resolution:2;-torque-data-aggregation:linear}#catalonia2015{comp-op:lighter;marker-opacity:.2;marker-line-color:#FFF;marker-line-width:0;marker-line-opacity:1;marker-type:ellipse;marker-width:2;marker-fill:#F90}#catalonia2015::point2[value=1],#catalonia2015[value=1]{marker-fill:#42a4dc}#catalonia2015::point2[value=2],#catalonia2015[value=2]{marker-fill:#ce4039}#catalonia2015::point2[value=3],#catalonia2015[value=3]{marker-fill:#4b1e5b}#catalonia2015::point2[value=4],#catalonia2015[value=4]{marker-fill:#539147}#catalonia2015::point2[value=5],#catalonia2015[value=5]{marker-fill:#FF5C00}#catalonia2015[value=6]{marker-fill:#EC008C}#catalonia2015::point2,#catalonia2015::point3{marker-fill:#229A00;marker-line-color:#fff;marker-line-width:1}#catalonia2015::point2{marker-width:1;marker-fill-opacity:1;marker-line-opacity:0}#catalonia2015::point2[value=6]{marker-fill-opacity:0}#catalonia2015::point3{marker-width:8;marker-fill-opacity:0;marker-line-opacity:.2}#catalonia2015::3[value=1]{marker-line-color:#5ca2dc}#catalonia2015::point3[value=2]{marker-line-color:#cd1f25}#catalonia2015::point3[value=3]{marker-line-color:#aa0028}#catalonia2015::point3[value=4]{marker-line-color:#593561}#catalonia2015::point3[value=5]{marker-line-color:#FF5C00}#catalonia2015::point3[value=6]{marker-line-color:#c3007f}#catalonia2015[frame-offset=1]{marker-width:3;marker-opacity:.45}#catalonia2015[frame-offset=2]{marker-width:4;marker-opacity:.225}#catalonia2015[frame-offset=3]{marker-width:5;marker-opacity:.15}#catalonia2015[frame-offset=4]{marker-width:6;marker-opacity:.1125}#catalonia2015[frame-offset=5]{marker-width:7;marker-opacity:.09}#catalonia2015[frame-offset=6]{marker-width:8;marker-opacity:.075}#catalonia2015[frame-offset=7]{marker-width:9;marker-opacity:.0642857142857143}#catalonia2015[frame-offset=8]{marker-width:10;marker-opacity:.05625}#catalonia2015[frame-offset=9]{marker-width:11;marker-opacity:.05}'
                       }
                   };
