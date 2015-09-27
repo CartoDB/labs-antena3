@@ -166,21 +166,24 @@
                         "}"
                 }]
             };
-            cartodb.createLayer(map, basemapLayer).addTo(map);
+            cartodb.createLayer(map, basemapLayer).addTo(map)
+            .done(function () {
+              var animatedLayer = {
+                  user_name: 'kike-5',
+                  type: 'torque',
+                  options: {
+                      query: "SELECT * FROM catalonia2015 where category_name in (1,2,3,4,5,6,7) " +
+                      "and postedtime > '2015-09-27 07:00'",
+                      cartocss: $("#cartocss").html()
+                  }
+              };
 
-
-            var animatedLayer = {
-                user_name: 'kike-5',
-                type: 'torque',
-                options: {
-                    query: "SELECT * FROM catalonia2015 where category_name in (1,2,3,4,5,6,7)",
-                    cartocss: $("#cartocss").html()
-                }
-            };
-            cartodb.createLayer(map, animatedLayer).addTo(map)
-            .done(function(layer) {
+              cartodb.createLayer(map, animatedLayer).addTo(map)
+              .done(function(layer) {
                 torqueLayer = layer;
+              });
             });
+
         </script>
     </body>
 </html>
