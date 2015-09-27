@@ -12,7 +12,7 @@
             #map {
                 height: 100%;
                 width: 100%;
-                background: #fff
+                background: #232325;
             }
         </style>
     </head>
@@ -20,16 +20,61 @@
         <div id="map"></div>
         <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
         <script>
+            function getParameterByName(name) {
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search);
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+
             var map = L.map('map', {
-                scrollWheelZoom: true,
-                center: [40, 0],
-                zoom: 3
+                scrollWheelZoom: false,
+                zoomControl: false,
+                center: [39.5, -4.362060546875],
+                zoom: getParameterByName('zoom') || 6
             });
 
-            var basemapLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',{
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
-            });
-            map.addLayer(basemapLayer);
+
+            var world = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT * FROM tm_world_borders_0_3 where name NOT LIKE 'Spain'",
+                    cartocss: "" +
+                        "#tm_world_borders_0_3{" +
+                        "  polygon-fill: #0d0d0d;" +
+                        "  polygon-opacity: 1;" +
+                        "  line-color: #2f2f2f;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: 1;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, world).addTo(map);
+
+
+            var basemapLayer = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT * FROM spain_provinces",
+                    cartocss: "" +
+                        "#spain_provinces{" +
+                        "  polygon-fill: #0d0d0d;" +
+                        "  polygon-opacity: 1;" +
+                        "  line-color: #2f2f2f;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: 1;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, basemapLayer).addTo(map);
+
+
+
+
+
+
 
             var dataLayer = {
                 user_name: 'solutions',
@@ -47,14 +92,14 @@
                     cartocss: "" +
                         "#catalonia_elections_twitter_test{" +
                         "  line-color: #000000;" +
-                        "  line-width: 0.5;" +
-                        "  line-opacity: .2;" +
+                        "  line-width: 0.2;" +
+                        "  line-opacity: .01;" +
                         "}" +
                         "#catalonia_elections_twitter_test [ category_name = 1] {" +
-                        "  line-color: #FF0000;" +
+                        "  line-color: #FFF;" +
                         "}" +
                         "#catalonia_elections_twitter_test [ category_name = 2] {" +
-                        "  line-color: #00FF00;" +
+                        "  line-color: #FFF;" +
                         "}"
                 }]
             };
@@ -75,7 +120,7 @@
                         "           ), 3857) as the_geom_webmercator, category_name from catalonia_elections_twitter_test) " +
 "select ST_Line_Interpolate_Point(lines.the_geom_webmercator," +
 "    generate_series(0, 10):: double precision / 10" +
-"  ) as the_geom_webmercator, generate_series(0, 10) as step, category_name from lines",
+"  ) as the_geom_webmercator, (10 - generate_series(0, 10)) as step, category_name from lines",
             cartocss: 'Map {' +
                               '  -torque-frame-count:10;' +
                               '  -torque-animation-duration:3;' +
@@ -87,15 +132,15 @@
                               '#catalonia_elections_twitter_test{' +
                               '  comp-op:lighter;' +
                               '  marker-opacity:1;' +
-                              '  marker-line-color:#FFF;' +
-                              '  marker-line-width:0;' +
-                              '  marker-line-opacity:1;' +
+                              '  marker-line-color:#FA3832;' +
+                              '  marker-line-width:1;' +
+                              '  marker-line-opacity:.1;' +
                               '  marker-type:ellipse;' +
-                              '  marker-width:2;' +
+                              '  marker-width:3;' +
                               '  marker-fill:#F90' +
                               '}' +
-                              '#catalonia_elections_twitter_test[value=1]{marker-fill:#ff0000}' +
-                              '#catalonia_elections_twitter_test[value=2]{marker-fill:#00ff00}'
+                              '#catalonia_elections_twitter_test[value=1]{marker-fill:#FA3832}' +
+                              '#catalonia_elections_twitter_test[value=2]{marker-fill:#FA3832}'
                 }
             };
             cartodb.createLayer(map, animatedLayer).addTo(map);
