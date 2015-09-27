@@ -1,0 +1,186 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Mapa global por partidos</title>
+        <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+        <link rel="stylesheet" href="css/map.css" />
+        <style type="text/css">
+            body, html {
+                width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            #map {
+                height: 100%;
+                width: 100%;
+                background: #232325;
+            }
+        </style>
+        <style type="cartocss/text" id="cartocss">
+            Map {
+-torque-frame-count:512;
+-torque-animation-duration:30;
+-torque-time-attribute:"postedtime";
+-torque-aggregation-function:"CDB_Math_Mode(category_name)";
+-torque-resolution:2;
+-torque-data-aggregation:linear;
+}
+
+#catalonia2015{
+  comp-op: lighter;
+  marker-opacity: 0.2;
+  marker-line-color: #FFF;
+  marker-line-width: 0;
+  marker-line-opacity: 1;
+  marker-type: ellipse;
+  marker-width: 2;
+  marker-fill: #FF9900;
+  [value=1] { marker-fill: #E14B5C; }
+  [value=2] { marker-fill: #FEEB34; }
+  [value=3] { marker-fill: #EF7A36; }
+  [value=4] { marker-fill: #0BB2FF; }
+  [value=5] { marker-fill: #E01122; }
+  [value=6] { marker-fill: #B71A43; }
+  [value=7] { marker-fill: #0152AD; }
+} 
+#catalonia2015::point2 {
+  marker-width: 1;
+  marker-fill: #229A00;
+  marker-fill-opacity: 1;
+  marker-line-color: #fff;
+  marker-line-width: 1;
+  marker-line-opacity: 0;
+  [value=1] { marker-fill: #E14B5C; }
+  [value=2] { marker-fill: #FEEB34; }
+  [value=3] { marker-fill: #EF7A36; }
+  [value=4] { marker-fill: #0BB2FF; }
+  [value=5] { marker-fill: #E01122; }
+  [value=6] { marker-fill: #B71A43; }
+  [value=7] { marker-fill: #0152AD; }
+}
+#catalonia2015::point3 {
+  marker-width: 8;
+  marker-fill: #229A00;
+  marker-fill-opacity: 0;
+  marker-line-color: #fff;
+  marker-line-width: 1;
+  marker-line-opacity: .2;
+  [value=1] { marker-fill: #E14B5C; }
+  [value=2] { marker-fill: #FEEB34; }
+  [value=3] { marker-fill: #EF7A36; }
+  [value=4] { marker-fill: #0BB2FF; }
+  [value=5] { marker-fill: #E01122; }
+  [value=6] { marker-fill: #B71A43; }
+  [value=7] { marker-fill: #0152AD; }
+}
+
+#catalonia2015[frame-offset=1] {
+  marker-width:3;
+  marker-opacity:0.45;
+}
+#catalonia2015[frame-offset=2]{
+  marker-width:4;
+  marker-opacity:0.225;
+}
+#catalonia2015[frame-offset=3]{
+  marker-width:5;
+  marker-opacity:0.15;
+}
+#catalonia2015[frame-offset=4]{
+  marker-width:6;
+  marker-opacity:0.1125;
+}
+#catalonia2015[frame-offset=5] {
+  marker-width:7;
+  marker-opacity:0.09;
+}
+#catalonia2015[frame-offset=6] {
+  marker-width:8;
+  marker-opacity:0.075;
+}
+#catalonia2015[frame-offset=7] {
+  marker-width:9;
+  marker-opacity:0.0642857142857143;
+}
+#catalonia2015[frame-offset=8] {
+  marker-width:10;
+  marker-opacity:0.05625;
+}
+#catalonia2015[frame-offset=9] {
+  marker-width:11;
+  marker-opacity:0.05;
+}
+        </style>
+    </head>
+    <body>
+
+        <div id="map"></div>
+        <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+        <script>
+            var torqueLayer;
+
+            function getParameterByName(name) {
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search);
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            }
+
+            var map = L.map('map', {
+                scrollWheelZoom: false,
+                center: [39.5, -4.362060546875],
+                zoom: getParameterByName('zoom') || 6
+            });
+
+
+            var world = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT * FROM tm_world_borders_0_3 where name NOT LIKE 'Spain'",
+                    cartocss: "" +
+                        "#tm_world_borders_0_3{" +
+                        "  polygon-fill: #0d0d0d;" +
+                        "  polygon-opacity: 1;" +
+                        "  line-color: #2f2f2f;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: 1;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, world).addTo(map);
+
+
+            var basemapLayer = {
+                user_name: 'solutions',
+                type: 'cartodb',
+                sublayers: [{
+                    sql: "SELECT * FROM spain_provinces",
+                    cartocss: "" +
+                        "#spain_provinces{" +
+                        "  polygon-fill: #0d0d0d;" +
+                        "  polygon-opacity: 1;" +
+                        "  line-color: #2f2f2f;" +
+                        "  line-width: 0.5;" +
+                        "  line-opacity: 1;" +
+                        "}"
+                }]
+            };
+            cartodb.createLayer(map, basemapLayer).addTo(map);
+
+
+            var animatedLayer = {
+                user_name: 'kike-5',
+                type: 'torque',
+                options: {
+                    query: "SELECT * FROM catalonia2015 where category_name in (1,2,3,4,5,6,7)",
+                    cartocss: $("#cartocss").html()
+                }
+            };
+            cartodb.createLayer(map, animatedLayer).addTo(map)
+            .done(function(layer) {
+                torqueLayer = layer;
+            });
+        </script>
+    </body>
+</html>
