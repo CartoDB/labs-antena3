@@ -148,41 +148,41 @@
                         "}"
                 }]
             };
-            cartodb.createLayer(map, world).addTo(map);
+            cartodb.createLayer(map, world).addTo(map)
 
-
-            var basemapLayer = {
-                user_name: 'solutions',
-                type: 'cartodb',
-                sublayers: [{
-                    sql: "SELECT * FROM spain_provinces",
-                    cartocss: "" +
-                        "#spain_provinces{" +
-                        "  polygon-fill: #0d0d0d;" +
-                        "  polygon-opacity: 1;" +
-                        "  line-color: #2f2f2f;" +
-                        "  line-width: 0.5;" +
-                        "  line-opacity: 1;" +
-                        "}"
-                }]
-            };
-            cartodb.createLayer(map, basemapLayer).addTo(map);
-            
             .done(function () {
-              var animatedLayer = {
-                  user_name: 'kike-5',
-                  type: 'torque',
-                  options: {
-                      query: "SELECT * FROM catalonia2015 where category_name in (1,2,3,4,5,6,7) " +
-                      "and postedtime > '2015-09-27 07:00'",
-                      cartocss: $("#cartocss").html()
-                  }
+              var basemapLayer = {
+                  user_name: 'solutions',
+                  type: 'cartodb',
+                  sublayers: [{
+                      sql: "SELECT * FROM spain_provinces",
+                      cartocss: "" +
+                          "#spain_provinces{" +
+                          "  polygon-fill: #0d0d0d;" +
+                          "  polygon-opacity: 1;" +
+                          "  line-color: #2f2f2f;" +
+                          "  line-width: 0.5;" +
+                          "  line-opacity: 1;" +
+                          "}"
+                  }]
               };
+              cartodb.createLayer(map, basemapLayer).addTo(map);
+              setTimeout(function () {
+                  var animatedLayer = {
+                      user_name: 'kike-5',
+                      type: 'torque',
+                      options: {
+                          query: "SELECT * FROM catalonia2015 where category_name in (1,2,3,4,5,6,7) " +
+                          "and postedtime > '2015-09-27 07:00'",
+                          cartocss: $("#cartocss").html()
+                      }
+                  };
 
-              cartodb.createLayer(map, animatedLayer).addTo(map)
-              .done(function(layer) {
-                torqueLayer = layer;
-              });
+                  cartodb.createLayer(map, animatedLayer).addTo(map)
+                  .done(function(layer) {
+                    torqueLayer = layer;
+                  });
+              }, 1000);
             });
 
         </script>

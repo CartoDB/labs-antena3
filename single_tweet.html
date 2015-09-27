@@ -96,9 +96,8 @@
                             "}"
                         }]
                     };
-                    cartodb.createLayer(map, dataLayer).addTo(map)
-                    .done(function () {
-
+                    cartodb.createLayer(map, dataLayer).addTo(map);
+                    setTimeout(function () {
                         var animatedLayer = {
                             user_name: 'solutions',
                             type: 'torque',
@@ -124,21 +123,31 @@
                                 '  -torque-data-aggregation:linear' +
                                 '}' +
                                 '#catalonia_elections_twitter_test{' +
-                                '  comp-op:lighter;' +
+                                '  comp-op:screen;' +
                                 '  marker-opacity:1;' +
                                 '  marker-line-color:#FA3832;' +
-                                '  marker-line-width:1;' +
-                                '  marker-line-opacity:.1;' +
+                                '  marker-line-width:0;' +
+                                '  marker-line-opacity:0;' +
                                 '  marker-type:ellipse;' +
-                                '  marker-width:3;' +
+                                '  marker-width:1;' +
                                 '  marker-fill:#F90' +
                                 '}' +
                                 '#catalonia_elections_twitter_test[value=1]{marker-fill:#FA3832}' +
-                                '#catalonia_elections_twitter_test[value=2]{marker-fill:#FA3832}'
+                                '#catalonia_elections_twitter_test[value=2]{marker-fill:#FA3832}' +
+                                '#catalonia_elections_twitter_test::point{' +
+                                '  comp-op:screen;' +
+                                '  marker-opacity:.1;' +
+                                '  marker-line-color:#FA3832;' +
+                                '  marker-line-width:0;' +
+                                '  marker-line-opacity:0;' +
+                                '  marker-type:ellipse;' +
+                                '  marker-width:8;' +
+                                '  marker-fill:#FA3832' +
+                                '}' 
                             }
                         };
                         cartodb.createLayer(map, animatedLayer).addTo(map);
-                    });
+                    },500);
                 });
             });
         </script>
